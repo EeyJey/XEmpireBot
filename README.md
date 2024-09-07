@@ -1,4 +1,4 @@
-# Bot for [X Empire](https://alexell.pro/cc/xempire) (Musk Empire)
+# Bot for [X Empire](https://t.me/empirebot/game?startapp=hero690957782) (Musk Empire)
 
 ![img1](.github/images/demo.png)
 
@@ -21,7 +21,7 @@
 | Automatic skill improvement           |     ✅     |
 | Docker                                |     ✅     |
 
-## [Options](https://github.com/Alexell/XEmpireBot/blob/main/.env-example)
+## [Options](https://github.com/EeyJey/XEmpireBot/blob/main/.env-example)
 | Option                  | Description                                                                                |
 |-------------------------|--------------------------------------------------------------------------------------------|
 | **API_ID / API_HASH**   | Platform data for launching a Telegram session                                             |
@@ -47,7 +47,7 @@ You can obtain the **API_ID** and **API_HASH** after creating an application at 
 
 **PvP negotiations** are disabled by default. Enable at your own risk. Upgrade your negotiation and ethics skills to win in case of a tie. League names for the **PVP_LEAGUE** parameter: `bronze`, `silver`, `gold`, `platina`, `diamond`. You can also specify `auto` in the **PVP_LEAGUE** parameter, and the bot will automatically select the lowest available league for you. The default strategy is randomly selected for each negotiation. If you wish, you can specify your own strategy, which will be used **in all** negotiations. Strategy names for the **PVP_STRATEGY** parameter: `aggressive`, `flexible`, `protective`. The **PVP_COUNT** parameter determines the number of negotiations the bot will conduct in one cycle.
 
-The answer to the **daily quiz** and the list of funds with guaranteed profits for **investing** are loaded from a [json file](https://alexell.pro/crypto/x-empire/data.json) on my website. I will try to update the data daily so that all your deployed bots can perform these actions and earn additional profit. When investing, the bet amount will always be the maximum, as the profit is guaranteed. If there is not enough money for the maximum bet, the bet amount will be reduced.
+The answer to the **daily quiz** and the list of funds with guaranteed profits for **investing** are loaded from a [json file](https://eeyjey.pro/crypto/x-empire/data.json) on my website. I will try to update the data daily so that all your deployed bots can perform these actions and earn additional profit. When investing, the bet amount will always be the maximum, as the profit is guaranteed. If there is not enough money for the maximum bet, the bet amount will be reduced.
 
 Each cycle, the bot will upgrade as many profit skills as specified in the **SKILLS_COUNT** parameter. The default is 10. You can specify the skill selection mode in the **SKILLS_MODE** parameter. There are 3 modes: `profitness` (the most profitable skills based on the profit/price ratio), `profit` (skills with the highest profit, regardless of price), and `price` (the cheapest skills, regardless of profit). The default mode is `profitness`. If possible, the bot will improve mining skills by 1 level each cycle until the level reaches the value specified in **MINING_SKILLS_LEVEL** parameter. Set it to 0 if you do not need to improve mining skills.
 
@@ -65,7 +65,7 @@ If you want to protect a certain amount of money in the balance, set the desired
 3. Use `START.bat` to launch the bot (or in the console: `python main.py`).
 
 ### Linux
-1. Clone the repository: `git clone https://github.com/Alexell/XEmpireBot.git && cd XEmpireBot`
+1. Clone the repository: `git clone https://github.com/EeyJey/XEmpireBot.git && cd XEmpireBot`
 
 **Attention:** If you are using **Python 3.12**, before proceeding to the next step, you need to either remove the `TgCrypto` line from `requirements.txt` (TgCrypto is not critical) or install the required software for automatic compilation of this package during installation:
 ```shell
@@ -76,7 +76,7 @@ apt install build-essential python3-dev
 
 ## Running in Docker
 ```
-$ git clone https://github.com/Alexell/XEmpireBot.git
+$ git clone https://github.com/EeyJey/XEmpireBot.git
 $ cd XEmpireBot
 $ cp .env-example .env
 $ nano .env # specify your API_ID and API_HASH, the rest can be left as default
@@ -95,9 +95,9 @@ $ docker run -d --restart unless-stopped --name XEmpireBot -v .:/app xempire_bot
 ```
 
 ## Manual installation
-You can download [**Repository**](https://github.com/Alexell/XEmpireBot) by cloning it to your system and installing the necessary dependencies:
+You can download [**Repository**](https://github.com/EeyJey/XEmpireBot) by cloning it to your system and installing the necessary dependencies:
 ```
-$ git clone https://github.com/Alexell/XEmpireBot.git
+$ git clone https://github.com/EeyJey/XEmpireBot.git
 $ cd XEmpireBot
 
 # Linux

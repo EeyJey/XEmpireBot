@@ -558,9 +558,9 @@ class CryptoBot:
 		log.info(f"{self.session_name} | PvP negotiations finished. {money_str}")
 
 	async def get_helper(self) -> dict:
-		url = 'https://alexell.pro/crypto/x-empire/data/'
+		url = 'https://eeyjey.pro/crypto/x-empire/data/'
 		try:
-			json_data = {'data': 'alexell'}
+			json_data = {'data': 'eeyjey'}
 			await self.set_sign_headers(data=json_data)
 			response = await self.http_client.post(url, json=json_data)
 			if response.status in [200, 400, 401, 403]:
