@@ -2,8 +2,6 @@
 
 ![img1](.github/images/demo.png)
 
-> 🇷🇺 README на русском доступен [здесь](README-RU.md)
-
 ## Functionality
 | Feature                               | Supported  |
 |---------------------------------------|:----------:|
