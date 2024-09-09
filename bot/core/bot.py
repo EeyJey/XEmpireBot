@@ -458,14 +458,11 @@ class CryptoBot:
 				break
 
 	async def perform_pvp(self, league: dict, strategy: str, count: int) -> None:
-		url_info = self.api_url + '/pvp/info'
-		url_fight = self.api_url + '/pvp/fight'
+		url_fight = self.api_url + '/pvp/start/fight'
 		url_cancel = self.api_url + '/pvp/fight/cancel'
 		url_claim = self.api_url + '/pvp/claim'
 		log.info(f"{self.session_name} | PvP negotiations started | League: {league['key']} | Strategy: {strategy}")
 		json_data = {}
-		await self.set_sign_headers(data=json_data)
-		await self.http_client.post(url_info, json=json_data)
 		await asyncio.sleep(3)
 		curent_strategy = strategy
 		money = 0
@@ -481,6 +478,7 @@ class CryptoBot:
 				break
 			
 			if strategy == 'random': curent_strategy = random.choice(self.strategies)
+
 			log.info(f"{self.session_name} | Searching opponent...")
 			try:
 				search_attempts += 1
@@ -543,17 +541,16 @@ class CryptoBot:
 						self.balance = int(response_json['data']['hero']['money'])
 						self.mph = int(response_json['data']['hero']['moneyPerHour'])
 					
-					await asyncio.sleep(random.randint(1, 2))
+					await asyncio.sleep(random.randint(3, 5))
 			except aiohttp.ClientResponseError as error:
 				if error.status == 401: self.authorized = False
 				self.errors += 1
 				log.error(f"{self.session_name} | PvP http error: {error.message}" + (f"\nTraceback: {traceback.format_exc()}" if config.DEBUG_MODE else ""))
 				await asyncio.sleep(delay=3)
-				break
 			except Exception as error:
 				log.error(f"{self.session_name} | PvP error: {str(error)}" + (f"\nTraceback: {traceback.format_exc()}" if config.DEBUG_MODE else ""))
-				await asyncio.sleep(random.randint(10, 30))
-				break
+				await asyncio.sleep(delay=3)
+			await asyncio.sleep(random.randint(15, 20))
 		money_str = f"Profit: +{number_short(value=money)}" if money > 0 else (f"Loss: {number_short(value=money)}" if money < 0 else "Profit: 0")
 		log.info(f"{self.session_name} | PvP negotiations finished. {money_str}")
 
@@ -820,50 +817,7 @@ class CryptoBot:
 								if success:
 									log.success(f"{self.session_name} | Reward for friend {friend} claimed")
 								await asyncio.sleep(random.randint(1, 2))
-						
-						if config.PVP_ENABLED:
-							if self.dbData:
-								league_data = None
-								selected_league = None
-								for league in self.dbData['dbNegotiationsLeague']:
-									if config.PVP_LEAGUE == 'auto':
-										if self.level >= league['requiredLevel'] and self.level <= league['maxLevel']:
-											if league_data is None or league['requiredLevel'] < league_data['requiredLevel']:
-												league_data = league
-									else:
-										if league['key'] == config.PVP_LEAGUE:
-											selected_league = league
-											if self.level >= league['requiredLevel'] and self.level <= league['maxLevel']:
-												league_data = league
-												break
-								
-								# if the current league is no longer available, select the next league
-								if config.PVP_LEAGUE != 'auto' and league_data is None:
-									if selected_league:
-										if config.PVP_UPGRADE_LEAGUE:
-											for league in self.dbData['dbNegotiationsLeague']:
-												if league['requiredLevel'] > selected_league['requiredLevel'] and self.level >= league['requiredLevel']:
-													league_data = league
-													break
-											log.info(f"{self.session_name} | Selected league is no longer available. New league: {league_data['key']}.")
-										else:
-											config.PVP_ENABLED = False
-											log.warning(f"{self.session_name} | Selected league is no longer available. PvP negotiations disabled.")
-									else:
-										config.PVP_ENABLED = False
-										log.warning(f"{self.session_name} | PVP_LEAGUE param is invalid. PvP negotiations disabled.")
-
-								if league_data is not None:
-									self.strategies = [strategy['key'] for strategy in self.dbData['dbNegotiationsStrategy']]
-									if config.PVP_STRATEGY == 'random' or config.PVP_STRATEGY in self.strategies:
-										await asyncio.sleep(random.randint(2, 4))
-										await self.perform_pvp(league=league_data, strategy=config.PVP_STRATEGY, count=config.PVP_COUNT)
-									else:
-										config.PVP_ENABLED = False
-										log.warning(f"{self.session_name} | PVP_STRATEGY param is invalid. PvP negotiations disabled.")
-							else:
-								log.warning(f"{self.session_name} | Database is missing. PvP negotiations will be skipped this time.")
-						
+										
 						# Quests with fakeCheck (2 quests at a time to avoid attracting attention)
 						quests_completed = 0
 						for dbQuest in self.dbData['dbQuests']:
@@ -983,7 +937,50 @@ class CryptoBot:
 					
 						main_actions = False
 						sum_delay = 0
-					
+						
+					if config.PVP_ENABLED:
+						if self.dbData:
+							league_data = None
+							selected_league = None
+							for league in self.dbData['dbNegotiationsLeague']:
+								if config.PVP_LEAGUE == 'auto':
+									if self.level >= league['requiredLevel'] and self.level <= league['maxLevel']:
+										if league_data is None or league['requiredLevel'] < league_data['requiredLevel']:
+											league_data = league
+								else:
+									if league['key'] == config.PVP_LEAGUE:
+										selected_league = league
+										if self.level >= league['requiredLevel'] and self.level <= league['maxLevel']:
+											league_data = league
+											break
+							
+							# if the current league is no longer available, select the next league
+							if config.PVP_LEAGUE != 'auto' and league_data is None:
+								if selected_league:
+									if config.PVP_UPGRADE_LEAGUE:
+										for league in self.dbData['dbNegotiationsLeague']:
+											if league['requiredLevel'] > selected_league['requiredLevel'] and self.level >= league['requiredLevel']:
+												league_data = league
+												break
+										log.info(f"{self.session_name} | Selected league is no longer available. New league: {league_data['key']}.")
+									else:
+										config.PVP_ENABLED = False
+										log.warning(f"{self.session_name} | Selected league is no longer available. PvP negotiations disabled.")
+								else:
+									config.PVP_ENABLED = False
+									log.warning(f"{self.session_name} | PVP_LEAGUE param is invalid. PvP negotiations disabled.")
+
+							if league_data is not None:
+								self.strategies = [strategy['key'] for strategy in self.dbData['dbNegotiationsStrategy']]
+								if config.PVP_STRATEGY == 'random' or config.PVP_STRATEGY in self.strategies:
+									await asyncio.sleep(random.randint(2, 4))
+									await self.perform_pvp(league=league_data, strategy=config.PVP_STRATEGY, count=config.PVP_COUNT)
+								else:
+									config.PVP_ENABLED = False
+									log.warning(f"{self.session_name} | PVP_STRATEGY param is invalid. PvP negotiations disabled.")
+						else:
+							log.warning(f"{self.session_name} | Database is missing. PvP negotiations will be skipped this time.")
+	
 					if config.TAPS_ENABLED:
 						per_tap = int(profile['hero']['earns']['task']['moneyPerTap'] or 0)
 						max_energy = int(profile['hero']['earns']['task']['limit'] or 0)
